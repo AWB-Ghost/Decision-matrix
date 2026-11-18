@@ -1,0 +1,210 @@
+@import 'tailwindcss';
+
+/* Tokens — docs/04_VISUAL_DESIGN_SYSTEM.md. Light first; dark mode intentionally deferred (post-MVP). */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif;
+
+  --color-canvas: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f3f6;
+  --color-ink: #15171b;
+  --color-ink-secondary: #606873;
+  --color-ink-tertiary: #89919e;
+  /* AA-safe variant of tertiary for small text on white */
+  --color-ink-quiet: #6b737f;
+  --color-line: #e5e8ee;
+  --color-line-strong: #d5dae2;
+  --color-accent: #3567e8;
+  --color-accent-strong: #2a55c9;
+  --color-accent-soft: #ebf1ff;
+  --color-success: #287d65;
+  --color-success-soft: #e6f3ee;
+  --color-success-ink: #1d6450; /* AA on tinted surfaces */
+  --color-warning: #a26a23;
+  --color-warning-soft: #f8efe1;
+  --color-danger: #c83f42;
+  --color-danger-soft: #fbeaea;
+
+  --color-q-ui: #4169d5; /* Urgent + important */
+  --color-q-ui-soft: #e9eeff;
+  --color-q-imp: #278875; /* Important, not urgent */
+  --color-q-imp-soft: #e5f3ef;
+  --color-q-urg: #b17b35; /* Urgent, not important */
+  --color-q-urg-soft: #faf0df;
+  --color-q-none: #87919f; /* Neither */
+  --color-q-none-soft: #eef0f3;
+
+  --radius-card: 16px;
+  --radius-action: 20px;
+  --radius-sheet: 22px;
+  --shadow-card: 0 2px 12px rgba(20, 30, 50, 0.035);
+  --shadow-sheet: 0 -8px 40px rgba(20, 30, 50, 0.12);
+
+  --ease-out-quiet: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: var(--color-canvas);
+    color-scheme: light;
+  }
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  #root {
+    min-height: 100dvh;
+  }
+  button,
+  [role='button'] {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  /* iOS zooms inputs under 16px — keep form text at 16px on phones */
+  @media (max-width: 767px) {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  .hairline {
+    border: 1px solid var(--color-line);
+  }
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-secondary);
+  }
+  .hatch {
+    background-image: repeating-linear-gradient(
+      135deg,
+      var(--color-line) 0 2px,
+      transparent 2px 7px
+    );
+  }
+  .sr-only-focusable:not(:focus) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+}
+
+/* Quiet motion only; disabled for reduced-motion users. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes saved-flash {
+  0% {
+    background-color: var(--color-accent-soft);
+  }
+  100% {
+    background-color: var(--color-surface);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.anim-fade-up {
+  animation: fade-up 180ms var(--ease-out-quiet) both;
+}
+.anim-sheet {
+  animation: sheet-up 220ms var(--ease-out-quiet) both;
+}
+.anim-fade {
+  animation: fade-in 160ms var(--ease-out-quiet) both;
+}
+.anim-saved {
+  animation: saved-flash 1200ms var(--ease-out-quiet) both;
+}
+.anim-spin {
+  animation: spin 900ms linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .anim-spin {
+    animation: none !important;
+  }
+}
